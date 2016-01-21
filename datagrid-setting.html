@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="css/easyui.css">
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+	<style>
+		.icon-tip {
+			background: url('css/images/tip.png') no-repeat center center;
+		}
+		.arrow {
+			width: 20px;
+			height: 20px;
+			position: relative;
+			display: inline-block;
+		}
+		.arrow:before, .arrow:after {
+			content: '';
+			border-color: transparent;
+			border-style: solid;
+			position: absolute;
+		}
+		.arrow-up:before {
+			border: none;
+			background-color: #555;
+			height: 50%;
+			width: 30%;
+			top: 50%;
+			left: 35%;
+		}
+		.arrow-up:after {
+			left: 0;
+			top: -50%;
+			border-width: 10px 10px;
+			border-bottom-color: #555;
+		}
+
+		.arrow-right:before {
+			border: none;
+			background-color: #555;
+			height: 30%;
+			width: 50%;
+			top: 35%;
+			left: 0;
+		}
+		.arrow-right:after {
+			left: 50%;
+			top: 0;
+			border-width: 10px 10px;
+			border-left-color: #555;
+		}
+
+		.arrow-down:before {
+			border: none;
+			background-color: #555;
+			height: 50%;
+			width: 30%;
+			top: 0;
+			left: 35%;
+		}
+		.arrow-down:after {
+			left: 0;
+			top: 50%;
+			border-width: 10px 10px;
+			border-top-color: #555;
+		}
+
+		.arrow-left:before {
+			border: none;
+			background-color: #555;
+			height: 30%;
+			width: 50%;
+			top: 35%;
+			left: 50%;
+		}
+		.arrow-left:after {
+			left: -50%;
+			top: 0;
+			border-width: 10px 10px;
+			border-right-color: #555;
+		}
+	</style>
+</head>
+<body>
+	<h2>DataGrid Columns Setting</h2>
+	<div style="margin:20px 0;"></div>
+	<table id="table" class="easyui-datagrid" title="Format DataGrid Columns" style="width:600px;height:500px"
+			data-options="">
+		<thead>
+			<tr>
+				<th data-options="field:'itemid',width:80">Item ID</th>
+				<th data-options="field:'productid',width:100">Product</th>
+				<th data-options="field:'listprice',width:80,align:'right'">List Price</th>
+				<th data-options="field:'unitcost',width:80,align:'right'">Unit Cost</th>
+				<th data-options="field:'attr1',width:240">Attribute</th>
+				<th data-options="field:'status',width:60,align:'center'">Status</th>
+
+			</tr>
+		</thead>
+	</table>
+	<div id="settingDialog" title="表格配置" style="padding:10px;display:none;">
+		<div style="display:inline-block;">
+			<label>隐藏列</label>
+			<div id="hiddenList"></div>
+		</div>
+		<div style="position:relative;width:20px;display:inline-block;">
+			<a href="#" id="checkButton" class="arrow arrow-right" style="top:-150px;"></a>
+			<a href="#" id="uncheckButton" class="arrow arrow-left" style="top:-130px;"></a>
+		</div>
+		<div style="display:inline-block;">
+			<label>显示列</label>
+			<div id="checkedList"></div>
+		</div>
+		<div style="position:relative;width:20px;display:inline-block;">
+			<a href="#" id="upButton" class="arrow arrow-up" style="top:-150px;"></a>
+			<a href="#" id="downButton" class="arrow arrow-down" style="top:-130px;"></a>
+		</div>
+	</div>
+
+	<script>
+		var settingData=['itemid','productid','status'];//配置的测试数据
+		var flag=false;//是否获取远程数据
+		var tableSelector=$("#table");//datagrid
+		var toolbar = [{
+			text:'配置',
+			iconCls:'icon-tip',
+			handler:function(){
+				$('#settingDialog').show();
+				//初始化datalist,显示table所有column
+				var oldColumns=tableSelector.datagrid('options').columns[0];
+				var visibleColumns=[],hiddenColumns=[];
+				for(var i=0;i<oldColumns.length;i++){
+					if(!oldColumns[i].hidden)
+						visibleColumns.push({text:oldColumns[i].title,value:oldColumns[i].field,change:false});
+					else
+						hiddenColumns.push({text:oldColumns[i].title,value:oldColumns[i].field,change:false});
+				}
+				//初始化所有column list
+				$('#hiddenList').datalist({
+					height:"300px",
+					width:"200px",
+					singleSelect: true,
+					data:hiddenColumns,
+					onDblClickRow: function(index,row){
+						leftOrRightColumn($('#hiddenList'),$('#checkedList'),row);
+					},
+					rowStyler: function(index,row){
+						if (row.change){
+							return 'color:red;';
+						}
+					}
+				});
+				//初始化已显示的column list
+				$('#checkedList').datalist({
+					height:"300px",
+					width:"200px",
+					singleSelect: true,
+					data:visibleColumns,
+					onDblClickRow: function(index,row){
+						leftOrRightColumn($('#checkedList'),$('#hiddenList'),row);
+					},
+					rowStyler: function(index,row){
+						if (row.change){
+							return 'color:blue;';
+						}
+					}
+				});
+				$('#settingDialog').dialog({
+					width:'500px',
+					closed:false,
+					modal:true,
+					buttons: [{
+						text: "全选",
+						handler: function () {
+							var hiddens=$('#hiddenList').datalist('getData').rows;
+							for(var i=0;i<hiddens.length;i++)
+								hiddens[i].change=!hiddens[i].change;
+							if($('#checkedList').datalist("getData").total==0) {
+								$('#checkedList').datalist({data:hiddens});
+							}
+							else{
+								for (var i = 0; i < hiddens.length; i++)
+									$('#checkedList').datalist('appendRow', hiddens[i]);
+							}
+							$('#hiddenList').datalist({data:[]});
+						}
+					},{
+						text: "全不选",
+						handler: function () {
+							var checks=$('#checkedList').datalist('getData').rows;
+							for(var i=0;i<checks.length;i++)
+								checks[i].change=!checks[i].change;
+							if($('#hiddenList').datalist("getData").total==0) {
+								$('#hiddenList').datalist({data:checks});
+							}
+							else {
+								for (var i = 0; i < checks.length; i++)
+									$('#hiddenList').datalist('appendRow', checks[i]);
+							}
+							$('#checkedList').datalist({data:[]});
+						}
+					}, {
+						text: "确定",
+						handler: function () {
+							var columns = $('#checkedList').datalist("getData");
+							var orderColumns=[];
+							for(var i=0;i<columns.total;i++)
+								orderColumns.push(columns.rows[i].value);
+							setColumnOptions(orderColumns);
+							$('#settingDialog').dialog("close");
+						}
+					}, {
+						text: "关闭",
+						handler: function () {
+							$('#settingDialog').dialog("close");
+						}
+					}]
+				});
+
+			}
+		}];
+		//direct==0 上移 / direct==1 下移
+		function upOrDownColumn(direct){
+			var selected=$('#checkedList').datalist("getSelected");
+			var index=$('#checkedList').datalist("getRowIndex",selected);
+			var swapIndex=direct==0?index-1:index+1;
+			if(0<=swapIndex&&swapIndex<$('#checkedList').datalist("getRows").length){
+				$('#checkedList').datalist("deleteRow",index);
+				$('#checkedList').datalist("insertRow",{index:swapIndex,row:selected});
+				$('#checkedList').datalist("selectRow",swapIndex);
+			}
+		}
+		//左右移动
+		function leftOrRightColumn(from,to,selected){
+			selected=selected||from.datalist("getSelected");
+			selected.change=!selected.change;
+			if(selected) {
+				var index = from.datalist("getRowIndex", selected);
+				from.datalist("deleteRow", index);
+				if(to.datalist("getData").total==0)
+					to.datalist({data:[selected]});
+				else
+					to.datalist("appendRow", selected);
+			}
+		}
+		//根据配置显示datagrid
+		function setColumnOptions(orderColumns){
+			var columnOptions =tableSelector.datagrid('options').columns[0];
+			//修改顺序
+			for(var i=0;i<orderColumns.length;i++){
+				if(orderColumns[i]==columnOptions[i].field) {
+					columnOptions[i].hidden=false;
+					continue;
+				}
+				for(var j=i+1;j<columnOptions.length;j++){
+					if(orderColumns[i]==columnOptions[j].field){
+						columnOptions[j].hidden=false;
+						var temp=columnOptions[i];
+						columnOptions[i]=columnOptions[j];
+						columnOptions[j]=temp;
+						break;
+					}
+				}
+			}
+			for(var i=orderColumns.length;i<columnOptions.length;i++)
+				columnOptions[i].hidden=true;
+			tableSelector.datagrid({
+				columns:[columnOptions]
+			});
+		}
+		$(function(){
+			$('#checkButton').click(function(){
+				leftOrRightColumn($('#hiddenList'),$('#checkedList'));
+				return false;
+			});
+			$('#uncheckButton').click(function(){
+				leftOrRightColumn($('#checkedList'),$('#hiddenList'));
+				return false;
+			});
+			$('#upButton').click(function(){
+				upOrDownColumn(0);
+				return false;
+			});
+			$('#downButton').click(function(){
+				upOrDownColumn(1);
+				return false;
+			});
+			tableSelector.datagrid({
+				url:'datagrid_data.json',
+				rownumbers:true,
+				singleSelect:true,
+				method:'get',
+				toolbar:toolbar,
+				onBeforeLoad: function(){
+					if(flag) {
+						tableSelector.datagrid('loadData',tableSelector.datagrid('getData'));
+						return false;
+					}
+					return true;
+				},
+				onLoadSuccess: function(){
+					//获取已有配置数据
+					if(!flag&&settingData)
+						setColumnOptions(settingData);
+					flag=true;
+				}
+			});
+		});
+	</script>
+</body>
+</html>
