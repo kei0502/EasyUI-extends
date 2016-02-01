@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery EasyUI Demo</title>
+    <link rel="stylesheet" type="text/css" href="css/easyui.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.easyui-1.3.5.min.js"></script>
+    <script type="text/javascript" src="datagrid-detailview.js"></script>
+    <script type="text/javascript" src="datagrid-detailview%20demo.js"></script>
+</head>
+<body style="padding-top: 0">
+<div class="lmr-row">
+    <div class="left-panel" style="display:inline-block;float:left;width:50%;">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">订单列表</h4>
+            </div>
+
+            <div class="panel-body tdh-table-container panel-body-nopadding">
+                <div id="orderTable"></div>
+            </div>
+        </div>
+    </div>
+    <div style="width:80px;text-align:center;display:inline-block;margin-top:15%;">
+        <button id="addButton" type="button"
+                class="btn btn-default add-store-btn">
+            添加
+        </button>
+        <button id="removeButton" type="button"
+                class="btn btn-default remove-store-btn">
+            移除
+        </button>
+        <button id="saveButton" type="button"
+                class="btn btn-default remove-store-btn">
+            保存
+        </button>
+    </div>
+
+    <div class="right-panel" style="display:inline-block;float:right;width:50%;">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">发车货物</h4>
+            </div>
+            <div class="panel-body tdh-table-container panel-body-nopadding">
+                <div id="joborderTable"></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>
