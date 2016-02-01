@@ -1,0 +1,113 @@
+{
+  "succ": 1,
+  "orders": [
+    {
+      "id": 1,
+      "depart": "出发地",
+      "target": "目的地",
+      "expectTime": "2016-01-31",
+      "transType": "零担",
+      "sendName": "客户名称",
+      "sendAddr": "发货人地址",
+      "sendMobile": "13333333333",
+      "sendPerson": "联系人",
+      "receiveName": "客户名称",
+      "receiveAddr": "收货人地址",
+      "receiveMobile": "13333333333",
+      "receivePerson": "联系人",
+      "deliveryType": "派送方式",
+      "receiptType": "回单",
+      "count": "份数",
+      "warning": "注意事项",
+      "secureMoney": "保险价值",
+      "fee": "代收费用",
+      "feeType": "结算方式",
+      "cargo": [
+        {
+          "cargoId": 1,
+          "cargoName": "1-货物1",
+          "scale": 1,
+          "amount": 1,
+          "assignAmount": 0,
+          "weight": 1,
+          "volumn": 1,
+          "wrapper": "木架",
+          "cargoInfo": "aa",
+          "comments": "备注"
+        },
+        {
+          "cargoId": 2,
+          "cargoName": "1-货物2",
+          "scale": 2,
+          "amount": 2,
+          "assignAmount": 0,
+          "weight": 2,
+          "volumn": 2,
+          "wrapper": "木架",
+          "cargoInfo": "aa",
+          "comments": "备注"
+        },
+        {
+          "cargoId": 5,
+          "cargoName": "1-货物3",
+          "scale": 5,
+          "amount": 5,
+          "assignAmount": 0,
+          "weight": 5,
+          "volumn": 5,
+          "wrapper": "木架",
+          "cargoInfo": "aa",
+          "comments": "备注"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "depart": "出发地2",
+      "target": "目的地2",
+      "expectTime": "2016-01-31",
+      "transType": "零担",
+      "sendName": "客户名称",
+      "sendAddr": "发货人地址",
+      "sendMobile": "13333333333",
+      "sendPerson": "联系人",
+      "receiveName": "客户名称",
+      "receiveAddr": "收货人地址",
+      "receiveMobile": "13333333333",
+      "receivePerson": "联系人",
+      "deliveryType": "派送方式",
+      "receiptType": "回单",
+      "count": "5",
+      "warning": "注意事项",
+      "secureMoney": 1000,
+      "fee": 100,
+      "feeType": "",
+      "cargo": [
+        {
+          "cargoId": 3,
+          "cargoName": "2-货物1",
+          "scale": 1,
+          "amount": 1,
+          "assignAmount": 0,
+          "weight": 1,
+          "volumn": 1,
+          "wrapper": "木架",
+          "cargoInfo": "aa",
+          "comments": "备注"
+        },
+        {
+          "cargoId": 4,
+          "cargoName": "2-货物2",
+          "scale": 1,
+          "amount": 1,
+          "assignAmount": 0,
+          "weight": 1,
+          "volumn": 1,
+          "wrapper": "木架",
+          "cargoInfo": "aa",
+          "comments": "备注"
+        }
+      ]
+    }
+  ]
+}
