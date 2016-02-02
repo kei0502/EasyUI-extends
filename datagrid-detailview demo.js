@@ -3,81 +3,103 @@ var checkFlag = false, uncheckFlag = false;
 var editIndex = undefined;
 
 function endEditing() {
-  if (editIndex == undefined) {
-    return true;
-  }
-  var grid = joborder_grid.datagrid('getRowDetail', editIndex[0]).find('table.ddv');
-  //展开
-  if (-1 != joborder_grid.datagrid('getExpander', editIndex[0])[0].className.indexOf('datagrid-row-collapse')
-      && grid.datagrid('validateRow', editIndex[1])) {
-    grid.datagrid('endEdit', editIndex[1]);
-    var amount = grid.datagrid('getRows')[editIndex[1]].amount;
-    var assignAmount = parseInt(grid.datagrid('getRows')[editIndex[1]].assignAmount);
-    if (assignAmount == 0) {
-      alert('分配件数不能为0');
-      grid.datagrid('rejectChanges');
-    }
-    else if (amount > assignAmount) {
-      grid.datagrid('acceptChanges');
-      var orders = order_grid.datagrid('getRows');
-      var joborder = joborder_grid.datagrid('getRows')[editIndex[0]];
-      var containFlag = contains(orders, joborder, 'id');
-      var updateRow;
-      //拆分订单不在order中
-      if (containFlag == -1) {
-        updateRow = $.extend({}, joborder);
-        var stockItem = $.extend({}, grid.datagrid('getRows')[editIndex[1]]);
-        updateRow.cargo = [stockItem];
-        order_grid.datagrid('appendRow', updateRow);
-        order_grid.datagrid('expandRow', orders.length);
+  if(editIndex) {
+    var grid = joborder_grid.datagrid('getRowDetail', editIndex[0]).find('table.ddv');
+    //展开
+    if (-1 != joborder_grid.datagrid('getExpander', editIndex[0])[0].className.indexOf('datagrid-row-collapse')
+        && grid.datagrid('validateRow', editIndex[1])) {
+      //会触发blur,改为手动refresh row
+      //grid.datagrid('endEdit', editIndex[1]);
+      grid.datagrid('getPanel').find('tr[datagrid-row-index="' + editIndex[1] + '"]').removeClass('datagrid-row-editing');
+      //grid.datagrid('refreshRow',editIndex[1]);
+
+      var amount = grid.datagrid('getRows')[editIndex[1]].amount;
+      //var assignAmount = parseInt(grid.datagrid('getRows')[editIndex[1]].assignAmount);
+      //没有endEdit后需要手动获取assignAmount
+      var assignAmount = parseInt(grid.datagrid('getPanel').find('tr[datagrid-row-index="' + editIndex[1] + '"] td[field="assignAmount"] input').eq(1).val());
+
+      if (assignAmount == 0) {
+        alert('分配件数不能为0');
+        //会触发blur
+        //grid.datagrid('rejectChanges');
+        //grid.datagrid('getPanel').find('tr[datagrid-row-index="'+editIndex[1]+'"]').removeClass('datagrid-row-editing');
+        grid.datagrid('refreshRow', editIndex[1]);
       }
-      else {//订单已经在order中
-        updateRow = orders[containFlag];
-        var stockItem = $.extend({}, grid.datagrid('getRows')[editIndex[1]]);
-        //订单下没有该货物,添加cargo
-        var idx = contains(updateRow.cargo, stockItem, 'cargoId');
-        if (idx == -1) {
-          updateRow.cargo.push(stockItem);
-          for (var i = 0, len = order_grid.datagrid('getRows').length; i < len; i++)
-            order_grid.datagrid('collapseRow', i);
-          order_grid.datagrid('updateRow', {index: containFlag, row: updateRow});
-          order_grid.datagrid('expandRow', containFlag);
+      else if (amount > assignAmount) {
+        //会触发blur
+        //grid.datagrid('acceptChanges');
+        //grid.datagrid('getPanel').find('tr[datagrid-row-index="'+editIndex[1]+'"]').removeClass('datagrid-row-editing');
+        grid.datagrid('updateRow', {index: editIndex[1], row: {assignAmount: assignAmount}});
+        grid.datagrid('refreshRow', editIndex[1]);
+
+        var orders = order_grid.datagrid('getRows');
+        var joborder = joborder_grid.datagrid('getRows')[editIndex[0]];
+        var containFlag = contains(orders, joborder, 'id');
+        var updateRow;
+        //拆分订单不在order中
+        if (containFlag == -1) {
+          updateRow = $.extend({}, joborder);
+          var stockItem = $.extend({}, grid.datagrid('getRows')[editIndex[1]]);
+          updateRow.cargo = [stockItem];
+          if(order_grid.datagrid('getRows').length==0)
+            order_grid.datagrid('loadData', {succ: 1, orders: [updateRow]});
+          else
+            order_grid.datagrid('appendRow', updateRow);//长度为0时append没反应
+          order_grid.datagrid('expandRow', orders.length);
         }
-        else {//订单下已经有该货物,修改cargo
-          updateRow.cargo[idx] = stockItem;
-          for (var i = 0, len = order_grid.datagrid('getRows').length; i < len; i++)
-            order_grid.datagrid('collapseRow', i);
-          order_grid.datagrid('updateRow', {index: containFlag, row: updateRow});
-          order_grid.datagrid('expandRow', containFlag);
+        else {//订单已经在order中
+          updateRow = orders[containFlag];
+          var stockItem = $.extend({}, grid.datagrid('getRows')[editIndex[1]]);
+          //订单下没有该货物,添加cargo
+          var idx = contains(updateRow.cargo, stockItem, 'cargoId');
+          if (idx == -1) {
+            updateRow.cargo.push(stockItem);
+            for (var i = 0, len = order_grid.datagrid('getRows').length; i < len; i++)
+              order_grid.datagrid('collapseRow', i);
+            order_grid.datagrid('updateRow', {index: containFlag, row: updateRow});
+            order_grid.datagrid('expandRow', containFlag);
+          }
+          else {//订单下已经有该货物,修改cargo
+            updateRow.cargo[idx] = stockItem;
+            for (var i = 0, len = order_grid.datagrid('getRows').length; i < len; i++)
+              order_grid.datagrid('collapseRow', i);
+            order_grid.datagrid('updateRow', {index: containFlag, row: updateRow});
+            order_grid.datagrid('expandRow', containFlag);
+          }
         }
       }
-    }
-    else if (assignAmount > amount) {
-      alert('件数不能比原来的更大');
-      grid.datagrid('rejectChanges');
-    }
-    else {//所有的都分配
-      grid.datagrid('acceptChanges');
-      var orders = order_grid.datagrid('getRows');
-      var joborder = joborder_grid.datagrid('getRows')[editIndex[0]];
-      var containFlag = contains(orders, joborder, 'id');
-      if(containFlag!=-1) {
-        var updateRow = orders[containFlag];
-        updateRow.cargo=updateRow.cargo.filter(function(x){return x.cargoId!=grid.datagrid('getRows')[editIndex[1]].cargoId;});
-        if(updateRow.cargo.length!=0) {
-          order_grid.datagrid('updateRow', {index: containFlag, row: updateRow});
-          order_grid.datagrid('collapseRow', containFlag);
-          order_grid.datagrid('expandRow', containFlag);
-        }
-        else{
-          order_grid.datagrid('deleteRow',containFlag);
+      else if (assignAmount > amount) {
+        alert('件数不能比原来的更大');
+        //会触发blur
+        //grid.datagrid('rejectChanges');
+        grid.datagrid('refreshRow', editIndex[1]);
+      }
+      else {//所有的都分配
+        //会触发blur
+        //grid.datagrid('acceptChanges');
+        grid.datagrid('updateRow', {index: editIndex[1], row: {assignAmount: assignAmount}});
+        grid.datagrid('refreshRow', editIndex[1]);
+
+        var orders = order_grid.datagrid('getRows');
+        var joborder = joborder_grid.datagrid('getRows')[editIndex[0]];
+        var containFlag = contains(orders, joborder, 'id');
+        if (containFlag != -1) {
+          var updateRow = orders[containFlag];
+          updateRow.cargo = updateRow.cargo.filter(function (x) {
+            return x.cargoId != grid.datagrid('getRows')[editIndex[1]].cargoId;
+          });
+          if (updateRow.cargo.length != 0) {
+            order_grid.datagrid('updateRow', {index: containFlag, row: updateRow});
+            order_grid.datagrid('collapseRow', containFlag);
+            order_grid.datagrid('expandRow', containFlag);
+          }
+          else {
+            order_grid.datagrid('deleteRow', containFlag);
+          }
         }
       }
     }
     editIndex = undefined;
-    return true;
-  } else {
-    return false;
   }
 }
 function contains(arr, o, attr) {
@@ -527,14 +549,12 @@ $(function () {
         },
         onDblClickCell: function (i, f, r) {
           if (f == 'assignAmount') {
-            if (endEditing(i, r)) {
-              ddv.datagrid('selectRow', i).datagrid('beginEdit', i);
-              editIndex = [index, i];
-            }
-            else {
-              ddv.datagrid('selectRow', i);
-            }
+            ddv.datagrid('selectRow', i).datagrid('beginEdit', i);
+            editIndex = [index, i];
           }
+          joborder_grid.datagrid('getPanel').find('.datagrid-row-detail .datagrid-editable-input.validatebox-text').bind('blur', function () {
+            endEditing();
+          });
         },
         onSelect: function (i, r) {
           if (ddv.datagrid('getSelections').length == ddv.datagrid('getData').total) {
@@ -564,6 +584,7 @@ $(function () {
       joborder_grid.datagrid('fixDetailRowHeight', index);
     }
   });
+
 
   // order to joborder
   $('#addButton').click(function () {

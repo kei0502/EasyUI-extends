@@ -13,6 +13,40 @@
             background: url('css/images/filter.png') no-repeat center center;
         }
     </style>
+    <script type="text/javascript">
+        $(function () {
+            var t=[{text:'测试',
+                iconCls:'icon-filter',
+                handler:function(){
+                    console.log('测试toolbar');
+                }
+            }]
+            //datagrid初始化
+            $('#dg').datagrid({
+                singleSelect: true,
+                data: data.slice(0, 20), pagination: true,
+                pageSize: 20, rownumbers: true/*,toolbar:t*/
+            });
+            //调用datagridFilter
+            DatagridFilter($('#dg'));
+            //测试分页
+            var pager = $("#dg").datagrid("getPager");
+            pager.pagination({
+                total: data.length,
+                onSelectPage: function (pageNo, pageSize) {
+                    var start = (pageNo - 1) * pageSize;
+                    var end = start + pageSize;
+                    $("#dg").datagrid("loadData", data.slice(start, end));
+                    pager.pagination('refresh', {
+                        total: data.length,
+                        pageNumber: pageNo
+                    });
+                    //清空filter row
+                    $('tr[filter="true"] input[type="text"]').val('');
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <h1>DataGrid Filter Row</h1>

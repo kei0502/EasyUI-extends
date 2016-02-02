@@ -1,7 +1,23 @@
-//保存所有的filter filterTables[tableId]
-var filterTables=[];
+DatagridFilter = function(grid){
+  //过滤开关toolbar
+  var toolbar=[{
+    text:'过滤2',
+    iconCls:'icon-filter',
+    handler:function(){
+      //关掉过滤的时候去掉已有输入的缓存
+      if(grid.datagrid('options').filterRow)
+        DatagridFilter.filterTable[grid[0].id]=[];
+      grid.datagrid({filterRow:!grid.datagrid('options').filterRow});
+      grid.datagrid('addToolbarItem',toolbar);
+    }
+  }];
+  //添加过滤的toolbar
+  grid.datagrid('addToolbarItem',toolbar);
+}
+//缓存输入的filter filterTable[tableid]
+DatagridFilter.filterTable=[];
 //清除已有高亮
-function clearHighlight(dc, i, field){
+DatagridFilter.clearHighlight = function(dc, i, field){
   var ele=dc.body2.find('tr[datagrid-row-index="' + i + '"] td[field="'+field+'"] div');
   var str=ele.html();
   if(str){
@@ -10,19 +26,20 @@ function clearHighlight(dc, i, field){
     ele.html(str);
   }
 }
+//保存所有的filter filterTables[tableId]
 $.extend($.fn.datagrid.defaults.view, {
   onAfterRender: function (target) {
     var dc = $.data(target, 'datagrid').dc;
     var filterColumns=[];
-    if(filterTables[target.id])
-      filterColumns=filterTables[target.id];
-
+    if(DatagridFilter.filterTable[target.id])
+      filterColumns=DatagridFilter.filterTable[target.id];
     if (dc.header2.find('[filter="true"]').length == 0) {
       var header = dc.header1; //固定列表头
       var header2 = dc.header2; // 常规列表头
       var filterRow = $('<tr></tr>');
       var opts = $.data(target, 'datagrid').options;
 
+      //add filter row
       if(opts.filterRow){
         var columns = opts.columns;
         var frozenColumns = opts.frozenColumns;
@@ -66,9 +83,6 @@ $.extend($.fn.datagrid.defaults.view, {
           $(this).on('input', function () {
             var f = $(this).attr('field'),v = $(this).val();
             var flag=false;
-            var filterColumns=[];
-            if(filterTables[target.id])
-              filterColumns=filterTables[target.id];
             var dgData = $(target).datagrid('getRows');
             for(var i=0;i<filterColumns.length;i++){
               if(filterColumns[i].field==f) {
@@ -104,7 +118,7 @@ $.extend($.fn.datagrid.defaults.view, {
                   value = value.substring(1);
                 if (value == '') {
                   for (var i = 0; i < dgData.length; i++) {
-                    clearHighlight(dc, i, field);
+                    DatagridFilter.clearHighlight(dc, i, field);
                     if(idx==0||(idx>0 && dc.body1.find('tr[datagrid-row-index="' + i + '"]').is(':visible'))){
                       dc.body1.find('tr[datagrid-row-index="' + i + '"]').show();
                       dc.body2.find('tr[datagrid-row-index="' + i + '"]').show();
@@ -115,7 +129,7 @@ $.extend($.fn.datagrid.defaults.view, {
                 var reg = /^(-?\d+)(\.\d+)?$/;
                 if (optype > 0 && reg.test(value) && (value = parseInt(value))) {
                   for (var i = 0; i < dgData.length; i++) {
-                    clearHighlight(dc, i, field);
+                    DatagridFilter.clearHighlight(dc, i, field);
                     if(idx==0||(idx>0 && dc.body1.find('tr[datagrid-row-index="' + i + '"]').is(':visible'))) {
                       if (optype == 1) {
                         if (dgData[i][field] >= value){
@@ -184,7 +198,7 @@ $.extend($.fn.datagrid.defaults.view, {
                 else {
                   //alert('输入数字查询错误');
                   for (var i = 0; i < dgData.length; i++) {
-                    clearHighlight(dc, i, field);
+                    DatagridFilter.clearHighlight(dc, i, field);
                     dc.body1.find('tr[datagrid-row-index="' + i + '"]').show();
                     dc.body2.find('tr[datagrid-row-index="' + i + '"]').show();
                   }
@@ -193,7 +207,7 @@ $.extend($.fn.datagrid.defaults.view, {
               }
               if (value != '') {
                 for (var i = 0; i < dgData.length; i++) {
-                  clearHighlight(dc, i, field);
+                  DatagridFilter.clearHighlight(dc, i, field);
                   if(idx==0||(idx>0 && dc.body2.find('tr[datagrid-row-index="' + i + '"]').is(':visible'))) {
                     //精确查询显示的内容
                     var index = dc.body2.find('tr[datagrid-row-index="' + i + '"] td[field="' + field + '"] div').html().indexOf(value);
@@ -217,7 +231,7 @@ $.extend($.fn.datagrid.defaults.view, {
               }
               else {
                 for (var i = 0; i < dgData.length; i++) {
-                  clearHighlight(dc, i, field);
+                  DatagridFilter.clearHighlight(dc, i, field);
                   if(idx==0||(idx>0 && dc.body2.find('tr[datagrid-row-index="' + i + '"]').is(':visible'))){
                     dc.body1.find('tr[datagrid-row-index="' + i + '"]').show();
                     dc.body2.find('tr[datagrid-row-index="' + i + '"]').show();
@@ -225,41 +239,34 @@ $.extend($.fn.datagrid.defaults.view, {
                 }
               }
             }
-            filterTables[target.id]=filterColumns;
           });
         })
       }
     }
-    filterTables[target.id]=filterColumns;
+    DatagridFilter.filterTable[target.id]=filterColumns;
   }
 });
-var toolbar=[{
-  text:'过滤',
-  iconCls:'icon-filter',
-  handler:function(){
-    $('#dg').datagrid({filterRow:!tableSelector.datagrid('options').filterRow});
+$.extend($.fn.datagrid.methods, {
+  addToolbarItem : function (jq, items) {
+    return jq.each(function () {
+      //add toolbar item
+      var dpanel=$(this).datagrid('getPanel');
+      var toolbar = dpanel.find('div.datagrid-toolbar');
+      if (!toolbar.length) {
+        toolbar = $("<div class=\"datagrid-toolbar\"><table cellspacing=\"0\" cellpadding=\"0\"><tr></tr></table></div>").prependTo(dpanel);
+      }
+      var tr = toolbar.find("tr");
+      for (var i = 0; i < items.length; i++) {
+        var btn = items[i];
+        if (btn == "-") {
+          $("<td><div class=\"dialog-tool-separator\"></div></td>").appendTo(tr);
+        } else {
+          var td = $("<td></td>").appendTo(tr);
+          var b = $("<a href=\"javascript:void(0)\"></a>").appendTo(td);
+          b[0].onclick = eval(btn.handler || function () {});
+          b.linkbutton($.extend({}, btn, {plain : true}));
+        }
+      }
+    });
   }
-}];
-$(function () {
-  $('#dg').datagrid({
-    singleSelect: true,
-    data: data.slice(0, 20), pagination: true,
-    pageSize: 20, rownumbers: true,filterRow:true,toolbar:toolbar
-  });
-  //分页
-  var pager = $("#dg").datagrid("getPager");
-  pager.pagination({
-    total: data.length,
-    onSelectPage: function (pageNo, pageSize) {
-      var start = (pageNo - 1) * pageSize;
-      var end = start + pageSize;
-      $("#dg").datagrid("loadData", data.slice(start, end));
-      pager.pagination('refresh', {
-        total: data.length,
-        pageNumber: pageNo
-      });
-      //清空filter row
-      $('tr[filter="true"] input[type="text"]').val('');
-    }
-  });
 });

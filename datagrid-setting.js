@@ -1,3 +1,10 @@
+DatagridSetting = function(grid) {
+
+}
+
+
+
+
 var settingData=['itemid','productid'];//默认配置
 var settingFlag=0;
 
@@ -6,18 +13,17 @@ var tableSelector;//datagrid
 //direct==0 上移 / direct==1 下移
 function upOrDownColumn(direct){
   var selected=$('#checkedList').datagrid("getSelections");
-  var top=0,down=$('#checkedList').datagrid("getRows").length-1;
+
+  //如果往下,要从下往下移
+  if(direct==1)
+    selected.reverse();
+  var top=0;
+  //最前都选择的不做处理
   while(direct==0&&$('#checkedList').datagrid("getRowIndex",selected[0])==top) {
     selected.splice(0, 1);
     top++;
   }
-  while(direct==1&&$('#checkedList').datagrid("getRowIndex",selected[selected.length-1])==down) {
-    selected.splice(selected.length-1, 1);
-    down--;
-  }
-  //如果往下,要从下往下移
-  if(direct==1)
-    selected.reverse();
+
   for(var i=0;i<selected.length;i++){
     var index=$('#checkedList').datagrid("getRowIndex",selected[i]);
     var swapIndex=direct==0?index-1:index+1;
