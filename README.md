@@ -8,10 +8,12 @@
 ##### easyUI datagrid-detailview使用
 - 左右两个表的移动
 - 右边表格可拆分“件数”列的数据
+
 ##### datagrid-filter修改bug
 - checkbox的话不添加搜索列
 - 根据页面上的显示而非本身的data来过滤
 - 添加toolbar item,可选择是否filter
+
 ##### datagrid-setting修改bug
 - 多选后上下移动会循环的bug修复
 
