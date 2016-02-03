@@ -1,5 +1,10 @@
 # EasyUI-extends
 
+### 2016.2.3
+- datagrid-filter可选择是否显示toolbar
+- datagrid-setting中demo和功能性代码分离
+- 修改addToolbarItem原来每次刷新后需要手动添加的问题
+
 ### 2016.2.2
 - datagrid-filter中demo和功能性代码分离
 - datagrid-detailview demo增加input失去焦点即保存的功能

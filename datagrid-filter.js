@@ -1,18 +1,19 @@
-DatagridFilter = function(grid){
+DatagridFilter = function(grid,toolbarFlag){
+  this.grid=grid;
   //过滤开关toolbar
   var toolbar=[{
-    text:'过滤2',
+    text:'过滤',
     iconCls:'icon-filter',
     handler:function(){
       //关掉过滤的时候去掉已有输入的缓存
       if(grid.datagrid('options').filterRow)
         DatagridFilter.filterTable[grid[0].id]=[];
       grid.datagrid({filterRow:!grid.datagrid('options').filterRow});
-      grid.datagrid('addToolbarItem',toolbar);
     }
   }];
   //添加过滤的toolbar
-  grid.datagrid('addToolbarItem',toolbar);
+  if(toolbarFlag)
+    this.grid.datagrid('addToolbarItem',toolbar);
 }
 //缓存输入的filter filterTable[tableid]
 DatagridFilter.filterTable=[];
@@ -251,12 +252,14 @@ $.extend($.fn.datagrid.methods, {
     return jq.each(function () {
       //add toolbar item
       var dpanel=$(this).datagrid('getPanel');
+      var optToolbar=$(this).datagrid('options').toolbar;
       var toolbar = dpanel.find('div.datagrid-toolbar');
       if (!toolbar.length) {
         toolbar = $("<div class=\"datagrid-toolbar\"><table cellspacing=\"0\" cellpadding=\"0\"><tr></tr></table></div>").prependTo(dpanel);
       }
       var tr = toolbar.find("tr");
       for (var i = 0; i < items.length; i++) {
+        optToolbar.push(items[i]);
         var btn = items[i];
         if (btn == "-") {
           $("<td><div class=\"dialog-tool-separator\"></div></td>").appendTo(tr);

@@ -84,11 +84,84 @@
 			border-right-color: #555;
 		}
 	</style>
+	<script type="text/javascript">
+		$(function(){
+			var t1=new DatagridSetting($('#table1')),t2=new DatagridSetting($('#table2'));
+			//初始化配置设置
+			t1.settingData=['itemid'];
+			t2.settingData=['itemid','productid'];
+			$('#table1').datagrid({
+				url:'datagrid_data.json',
+				rownumbers:true,
+				singleSelect:true,
+				method:'get',
+				onBeforeLoad: function(){
+					if(t1.settingFlag!=0) {
+						t1.grid.datagrid('loadData',$(this).datagrid('getData'));
+						return false;
+					}
+					t1.settingFlag=1;
+					return true;
+				},
+				loadFilter:function(res){
+					if(t1.settingFlag!=0){
+						if(t1.settingFlag==1)
+							t1.settingFlag=2;
+						return res;
+					}
+					return {
+						'rows' : {},
+						'total' : 0
+					};
+				},
+				onLoadSuccess: function(){
+					//获取已有配置数据
+					if(t1.settingFlag==1){
+						t1.setColumnOptions();
+					}
+				}
+			});
+
+			t1.setColumnOptions();
+			$('#table2').datagrid({
+				url:'datagrid_data.json',
+				rownumbers:true,
+				singleSelect:true,
+				method:'get',
+				onBeforeLoad: function(){
+					if(t2.settingFlag!=0) {
+						t2.grid.datagrid('loadData',$(this).datagrid('getData'));
+						return false;
+					}
+					t2.settingFlag=1;
+					return true;
+				},
+				loadFilter:function(res){
+					if(t2.settingFlag!=0){
+						if(t2.settingFlag==1)
+							t2.settingFlag=2;
+						return res;
+					}
+					return {
+						'rows' : {},
+						'total' : 0
+					};
+				},
+				onLoadSuccess: function(){
+					//获取已有配置数据
+					if(t2.settingFlag==1){
+						t2.setColumnOptions();
+					}
+				}
+			});
+			t2.setColumnOptions();
+		});
+	</script>
 </head>
 <body>
 	<h2>DataGrid Columns Setting</h2>
 	<div style="margin:20px 0;"></div>
-	<table id="table" class="easyui-datagrid" title="Setting Datagrid" style="width:600px;height:500px"
+	<table id="table1" title="Setting Datagrid" style="width:600px;height:500px"
 			data-options="">
 		<thead>
 			<tr>
@@ -98,8 +171,21 @@
 				<th data-options="field:'unitcost',width:80,align:'right'">Unit Cost</th>
 				<th data-options="field:'attr1',width:240">Attribute</th>
 				<th data-options="field:'status',width:60,align:'center'">Status</th>
-
 			</tr>
+		</thead>
+	</table>
+	<table id="table2" class="easyui-datagrid" title="Setting Datagrid" style="width:600px;height:500px"
+		   data-options="">
+		<thead>
+		<tr>
+			<th data-options="field:'itemid',width:80">Item ID</th>
+			<th data-options="field:'productid',width:100">Product</th>
+			<th data-options="field:'listprice',width:80,align:'right'">List Price</th>
+			<th data-options="field:'unitcost',width:80,align:'right'">Unit Cost</th>
+			<th data-options="field:'attr1',width:240">Attribute</th>
+			<th data-options="field:'status',width:60,align:'center'">Status</th>
+
+		</tr>
 		</thead>
 	</table>
 	<div id="settingDialog" title="表格配置" style="padding:10px;display:none;">

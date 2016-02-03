@@ -25,10 +25,10 @@
             $('#dg').datagrid({
                 singleSelect: true,
                 data: data.slice(0, 20), pagination: true,
-                pageSize: 20, rownumbers: true/*,toolbar:t*/
+                pageSize: 20, rownumbers: true,toolbar:t
             });
             //调用datagridFilter
-            DatagridFilter($('#dg'));
+            DatagridFilter($('#dg'),true);
             //测试分页
             var pager = $("#dg").datagrid("getPager");
             pager.pagination({
@@ -41,8 +41,6 @@
                         total: data.length,
                         pageNumber: pageNo
                     });
-                    //清空filter row
-                    $('tr[filter="true"] input[type="text"]').val('');
                 }
             });
         });
