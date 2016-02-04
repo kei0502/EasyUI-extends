@@ -1,20 +1,24 @@
-DatagridSetting = function(grid,settingData) {
+DatagridSetting = function(grid,tableName,settingData) {
   this.settingData=settingData||[];//默认配置
-  this.settingFlag=0;//load flag
+  this.settingFlag=0;//load flag: 0初始化;1第一次远程加载数据;2配置
   this.grid=grid;
+  this.tableName=tableName;
 }
-
 $.extend($.fn.datagrid.methods, {
   addToolbarItem : function (jq, items) {
     return jq.each(function () {
       //add toolbar item
       var dpanel=$(this).datagrid('getPanel');
+      var opt=$(this).datagrid('options');
+      if(opt.toolbar==null)
+        opt.toolbar=[];
       var toolbar = dpanel.find('div.datagrid-toolbar');
       if (!toolbar.length) {
         toolbar = $("<div class=\"datagrid-toolbar\"><table cellspacing=\"0\" cellpadding=\"0\"><tr></tr></table></div>").prependTo(dpanel);
       }
       var tr = toolbar.find("tr");
       for (var i = 0; i < items.length; i++) {
+        opt.toolbar.push(items[i]);
         var btn = items[i];
         if (btn == "-") {
           $("<td><div class=\"dialog-tool-separator\"></div></td>").appendTo(tr);
@@ -28,7 +32,31 @@ $.extend($.fn.datagrid.methods, {
     });
   }
 });
-
+DatagridSetting.prototype.init = function(){
+  var that=this;
+  var opt=this.grid.datagrid('options');
+  var tableName=this.tableName;
+  if(opt.configureUrl!=null) {
+    $.ajax({
+      url: opt.configureUrl,
+      dataType: 'json',
+      success: function (data) {
+        localStorage.setItem(tableName, data.columns);
+        that.settingData=data.columns;
+        opt.configureUrl = null;
+        that.settingFlag = 2;
+        that.setColumnOptions();
+      }
+    });
+  }
+  else{
+    that.settingData=localStorage.getItem(tableName).split(',');
+    if(that.settingData){
+      that.settingFlag = 2;
+      that.setColumnOptions();
+    }
+  }
+}
 //direct==0 上移 / direct==1 下移
 DatagridSetting.upOrDownColumn = function(direct){
   var selected=$('#checkedList').datagrid("getSelections");

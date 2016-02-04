@@ -86,15 +86,13 @@
 	</style>
 	<script type="text/javascript">
 		$(function(){
-			var t1=new DatagridSetting($('#table1')),t2=new DatagridSetting($('#table2'));
+			var t1=new DatagridSetting($('#table1'),'table1'),t2=new DatagridSetting($('#table2'),'table2');
 			//初始化配置设置
-			t1.settingData=['itemid'];
-			t2.settingData=['itemid','productid'];
 			$('#table1').datagrid({
 				url:'datagrid_data.json',
+				configureUrl:'configure_data.json',
 				rownumbers:true,
 				singleSelect:true,
-				method:'get',
 				onBeforeLoad: function(){
 					if(t1.settingFlag!=0) {
 						t1.grid.datagrid('loadData',$(this).datagrid('getData'));
@@ -105,29 +103,25 @@
 				},
 				loadFilter:function(res){
 					if(t1.settingFlag!=0){
-						if(t1.settingFlag==1)
-							t1.settingFlag=2;
+						if(t1.settingFlag==1) {
+							t1.init();
+						}
 						return res;
 					}
 					return {
 						'rows' : {},
 						'total' : 0
 					};
-				},
-				onLoadSuccess: function(){
-					//获取已有配置数据
-					if(t1.settingFlag==1){
-						t1.setColumnOptions();
-					}
 				}
 			});
+			t1.addToolbar();
 
-			t1.setColumnOptions();
+			//直接给配置赋值
+			t2.settingData=['itemid','productid'];
 			$('#table2').datagrid({
 				url:'datagrid_data.json',
 				rownumbers:true,
 				singleSelect:true,
-				method:'get',
 				onBeforeLoad: function(){
 					if(t2.settingFlag!=0) {
 						t2.grid.datagrid('loadData',$(this).datagrid('getData'));
@@ -138,23 +132,19 @@
 				},
 				loadFilter:function(res){
 					if(t2.settingFlag!=0){
-						if(t2.settingFlag==1)
-							t2.settingFlag=2;
+						if(t2.settingFlag==1) {
+							t2.settingFlag = 2;
+							t2.setColumnOptions();
+						}
 						return res;
 					}
 					return {
 						'rows' : {},
 						'total' : 0
 					};
-				},
-				onLoadSuccess: function(){
-					//获取已有配置数据
-					if(t2.settingFlag==1){
-						t2.setColumnOptions();
-					}
 				}
 			});
-			t2.setColumnOptions();
+			t2.addToolbar();
 		});
 	</script>
 </head>
@@ -174,7 +164,7 @@
 			</tr>
 		</thead>
 	</table>
-	<table id="table2" class="easyui-datagrid" title="Setting Datagrid" style="width:600px;height:500px"
+	<table id="table2" title="Setting Datagrid" style="width:600px;height:500px"
 		   data-options="">
 		<thead>
 		<tr>

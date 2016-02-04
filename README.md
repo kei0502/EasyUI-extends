@@ -1,5 +1,9 @@
 # EasyUI-extends
 
+### 2016.2.4
+- addToolbarItem没有toolbar时有问题的bug修复
+- datagrid-setting初始化可以通过url,并存在localStorage
+
 ### 2016.2.3
 - datagrid-filter可选择是否显示toolbar
 - datagrid-setting中demo和功能性代码分离
@@ -24,6 +28,6 @@
 
 ### 2016.1.21
 增加easyUI datagrid两项功能  
-- 过滤当前页的行  
+- datagrid-filter:过滤当前页的行  
 已有datagrid-filter有分页问题，所以写了个对当前页的内容进行内容过滤，支持多项查询、查询字符串高亮、对数字可以进行计算查询（>,<,=,!=,>=,<=）  
-- 根据配置显示/隐藏列，并改变顺序，改变后不重新加载数据  
+- datagrid-setting:根据配置显示/隐藏列，并改变顺序，改变后不重新加载数据  

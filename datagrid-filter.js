@@ -252,14 +252,16 @@ $.extend($.fn.datagrid.methods, {
     return jq.each(function () {
       //add toolbar item
       var dpanel=$(this).datagrid('getPanel');
-      var optToolbar=$(this).datagrid('options').toolbar;
+      var opt=$(this).datagrid('options');
+      if(opt.toolbar==null)
+        opt.toolbar=[];
       var toolbar = dpanel.find('div.datagrid-toolbar');
       if (!toolbar.length) {
         toolbar = $("<div class=\"datagrid-toolbar\"><table cellspacing=\"0\" cellpadding=\"0\"><tr></tr></table></div>").prependTo(dpanel);
       }
       var tr = toolbar.find("tr");
       for (var i = 0; i < items.length; i++) {
-        optToolbar.push(items[i]);
+        opt.toolbar.push(items[i]);
         var btn = items[i];
         if (btn == "-") {
           $("<td><div class=\"dialog-tool-separator\"></div></td>").appendTo(tr);
