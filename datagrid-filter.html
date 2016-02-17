@@ -25,7 +25,7 @@
             $('#dg').datagrid({
                 singleSelect: true,
                 data: data.slice(0, 20), pagination: true,
-                pageSize: 20, rownumbers: true,toolbar:t
+                pageSize: 20, pageList: [10,20,30],rownumbers: true,toolbar:t
             });
             //调用datagridFilter
             DatagridFilter($('#dg'),true);

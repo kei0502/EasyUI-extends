@@ -1,5 +1,8 @@
 # EasyUI-extends
 
+### 2016.2.17
+- datagrid-filter分页bug修复
+
 ### 2016.2.4
 - addToolbarItem没有toolbar时有问题的bug修复
 - datagrid-setting初始化可以通过url,并存在localStorage

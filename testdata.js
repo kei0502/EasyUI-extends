@@ -15,7 +15,7 @@ var data = [
     "status": "P",
     "listprice": 18.50,
     "attr1": "Spotted Adult Female",
-    "itemid": "EST-10"
+    "itemid": "EST-2"
   },
   {
     "productid": "RP-SN-01",
@@ -24,7 +24,7 @@ var data = [
     "status": "P",
     "listprice": 38.50,
     "attr1": "Venomless",
-    "itemid": "EST-11"
+    "itemid": "EST-3"
   },
   {
     "productid": "RP-SN-01",
@@ -33,7 +33,7 @@ var data = [
     "status": "P",
     "listprice": 26.50,
     "attr1": "Rattleless",
-    "itemid": "EST-12"
+    "itemid": "EST-4"
   },
   {
     "productid": "RP-LI-02",
@@ -42,7 +42,7 @@ var data = [
     "status": "P",
     "listprice": 35.50,
     "attr1": "Green Adult",
-    "itemid": "EST-13"
+    "itemid": "EST-5"
   },
   {
     "productid": "FL-DSH-01",
@@ -51,7 +51,7 @@ var data = [
     "status": "N",
     "listprice": 158.50,
     "attr1": "Tailless",
-    "itemid": "EST-14"
+    "itemid": "EST-6"
   },
   {
     "productid": "FL-DSH-01",
@@ -60,7 +60,7 @@ var data = [
     "status": "P",
     "listprice": 83.50,
     "attr1": "With tail",
-    "itemid": "EST-15"
+    "itemid": "EST-7"
   },
   {
     "productid": "FL-DLH-02",
@@ -69,7 +69,7 @@ var data = [
     "status": "P",
     "listprice": 23.50,
     "attr1": "Adult Female",
-    "itemid": "EST-16"
+    "itemid": "EST-8"
   },
   {
     "productid": "FL-DLH-02",
@@ -78,7 +78,7 @@ var data = [
     "status": "N",
     "listprice": 89.50,
     "attr1": "Adult Male",
-    "itemid": "EST-17"
+    "itemid": "EST-9"
   },
   {
     "productid": "AV-CB-01",
@@ -87,7 +87,7 @@ var data = [
     "status": "N",
     "listprice": 63.50,
     "attr1": "Adult Male",
-    "itemid": "EST-18"
+    "itemid": "EST-10"
   },
   {
     "productid": "FI-SW-03",
@@ -96,7 +96,7 @@ var data = [
     "status": "P",
     "listprice": 36.50,
     "attr1": "Large",
-    "itemid": "EST-1"
+    "itemid": "EST-11"
   },
   {
     "productid": "K9-DL-02",
@@ -105,24 +105,6 @@ var data = [
     "status": "P",
     "listprice": 18.50,
     "attr1": "Spotted Adult Female",
-    "itemid": "EST-10"
-  },
-  {
-    "productid": "RP-SN-02",
-    "productname": "Rattlesnake",
-    "unitcost": 12.00,
-    "status": "P",
-    "listprice": 38.50,
-    "attr1": "Venomless",
-    "itemid": "EST-11"
-  },
-  {
-    "productid": "RP-SN-02",
-    "productname": "Rattlesnake",
-    "unitcost": 12.00,
-    "status": "P",
-    "listprice": 26.50,
-    "attr1": "Rattleless",
     "itemid": "EST-12"
   },
   {
@@ -178,6 +160,23 @@ var data = [
     "listprice": 63.50,
     "attr1": "Adult Male",
     "itemid": "EST-18"
+  },{
+    "productid": "RP-SN-02",
+    "productname": "Rattlesnake",
+    "unitcost": 12.00,
+    "status": "P",
+    "listprice": 38.50,
+    "attr1": "Venomless",
+    "itemid": "EST-19"
+  },
+  {
+    "productid": "RP-SN-02",
+    "productname": "Rattlesnake",
+    "unitcost": 12.00,
+    "status": "P",
+    "listprice": 26.50,
+    "attr1": "Rattleless",
+    "itemid": "EST-20"
   },
   {
     "productid": "FI-SW-09",
@@ -186,7 +185,7 @@ var data = [
     "status": "P",
     "listprice": 36.50,
     "attr1": "Large",
-    "itemid": "EST-1"
+    "itemid": "EST-21"
   },
   {
     "productid": "K9-DL-10",
@@ -195,7 +194,7 @@ var data = [
     "status": "P",
     "listprice": 18.50,
     "attr1": "Spotted Adult Female",
-    "itemid": "EST-10"
+    "itemid": "EST-22"
   },
   {
     "productid": "RP-SN-11",
@@ -204,7 +203,7 @@ var data = [
     "status": "P",
     "listprice": 38.50,
     "attr1": "Venomless",
-    "itemid": "EST-11"
+    "itemid": "EST-23"
   },
   {
     "productid": "RP-SN-12",
@@ -213,7 +212,7 @@ var data = [
     "status": "P",
     "listprice": 26.50,
     "attr1": "Rattleless",
-    "itemid": "EST-12"
+    "itemid": "EST-24"
   },
   {
     "productid": "RP-LI-13",
@@ -450,4 +449,3 @@ var data = [
     "itemid": "EST-18"
   }
 ];
-
